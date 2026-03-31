@@ -108,8 +108,23 @@ For participants with multiple T1-weighted images available, the average of the 
 The converter can be run with the following command line:
 
 ```Text
-clinica convert oasis3-to-bids [OPTIONS] DATASET_DIRECTORY CLINICAL_DATA_DIRECTORY BIDS_DIRECTORY 
+clinica convert oasis3-to-bids [OPTIONS] DATASET_DIRECTORY CLINICAL_DATA_DIRECTORY BIDS_DIRECTORY
 ```
+
+### Optional parameters
+
+It is possible to convert a single modality at a time using the parameter `-m` with one of the following values:
+
+- `T1` for T1-weighted MRI
+- `T2STAR` for T2*-weighted MRI
+- `FLAIR` for FLAIR MRI
+- `DWI` for diffusion weighted imaging
+- `PET_FDG` for Fluorodeoxyglucose (FDG) PET
+- `PET_AMYLOID` for Pittsburgh compound B (PIB) and Florbetapir (AV45) PET
+
+By default, all modalities are converted.
+
+### Arguments
 
 where:
 
