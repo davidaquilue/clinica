@@ -1,3 +1,4 @@
+from enum import Enum
 from pathlib import Path
 from typing import Iterable
 
@@ -6,12 +7,39 @@ import pandas as pd
 from clinica.utils.stream import cprint
 
 __all__ = [
+    "OASIS3Modality",
     "read_clinical_data",
     "read_imaging_data",
     "intersect_data",
     "dataset_to_bids",
     "write_bids",
 ]
+
+
+class OASIS3Modality(str, Enum):
+    """Possible modalities supported by the OASIS3-to-BIDS converter.
+
+    Keys are aligned with the ADNI-to-BIDS converter where applicable.
+    """
+
+    T1 = "T1"
+    T2STAR = "T2STAR"
+    FLAIR = "FLAIR"
+    DWI = "DWI"
+    PET_FDG = "PET_FDG"
+    PET_AMYLOID = "PET_AMYLOID"
+
+
+# Mapping from user-facing OASIS3Modality to internal modality strings
+# used in _MODALITY_TO_BIDS.
+_MODALITY_TO_OASIS3_KEYS: dict[OASIS3Modality, list[str]] = {
+    OASIS3Modality.T1: ["T1w_MR"],
+    OASIS3Modality.T2STAR: ["T2star_MR"],
+    OASIS3Modality.FLAIR: ["FLAIR_MR"],
+    OASIS3Modality.DWI: ["dwi_MR"],
+    OASIS3Modality.PET_FDG: ["pet_FDG"],
+    OASIS3Modality.PET_AMYLOID: ["pet_PIB", "pet_AV45"],
+}
 
 # Hardcode relevant .csv filenames from the standardized OASIS3_data_files directory.
 # Each key maps to the stem(s) of the expected CSV file(s) within that subdirectory.
@@ -52,6 +80,15 @@ _CLINICAL_SCORE_COLUMNS = [
     "perscare",
     "sumbox",
 ]
+
+
+def filter_imaging_by_modalities(
+    df_source: pd.DataFrame,
+    modalities: Iterable[OASIS3Modality],
+) -> pd.DataFrame:
+    """Keep only rows whose internal modality string matches the selected user modalities."""
+    allowed = {key for mod in modalities for key in _MODALITY_TO_OASIS3_KEYS[mod]}
+    return df_source[df_source["modality"].isin(allowed)].copy()
 
 
 def _build_file_map(data_directory: Path) -> dict[str, pd.DataFrame]:

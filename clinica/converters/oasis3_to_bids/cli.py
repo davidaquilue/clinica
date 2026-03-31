@@ -1,18 +1,30 @@
 from os import PathLike
+from typing import Iterable, Optional, Union
 
 import click
 
 from clinica.converters import cli_param
+
+from ._utils import OASIS3Modality
 
 
 @click.command(name="oasis3-to-bids")
 @cli_param.dataset_directory
 @cli_param.clinical_data_directory
 @cli_param.bids_directory
+@click.option(
+    "-m",
+    "--modalities",
+    multiple=True,
+    type=click.Choice(OASIS3Modality),
+    default=list(OASIS3Modality),
+    help="Convert only the selected modality. By default, all available modalities are converted.",
+)
 def cli(
     dataset_directory: PathLike,
     clinical_data_directory: PathLike,
     bids_directory: PathLike,
+    modalities: Optional[Iterable[Union[str, OASIS3Modality]]] = None,
 ) -> None:
     """OASIS3 to BIDS converter.
 
@@ -22,7 +34,12 @@ def cli(
     """
     from ._converter import convert
 
-    convert(dataset_directory, bids_directory, clinical_data_directory)
+    convert(
+        dataset_directory,
+        bids_directory,
+        clinical_data_directory,
+        modalities=modalities or list(OASIS3Modality),
+    )
 
 
 if __name__ == "__main__":

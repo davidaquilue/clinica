@@ -1,8 +1,10 @@
 """Convert the OASIS3 dataset into BIDS."""
 
-from typing import Optional
+from typing import Iterable, Optional
 
 from clinica.utils.filemanip import UserProvidedPath
+
+from ._utils import OASIS3Modality
 
 __all__ = ["convert"]
 
@@ -13,6 +15,7 @@ def convert(
     path_to_clinical: UserProvidedPath,
     subjects: Optional[UserProvidedPath] = None,
     n_procs: Optional[int] = 1,
+    modalities: Optional[Iterable[OASIS3Modality]] = None,
     **kwargs,
 ):
     """Convert the entire dataset in BIDS.
@@ -28,6 +31,7 @@ def convert(
     from .._utils import validate_input_path, write_modality_agnostic_files
     from ._utils import (
         dataset_to_bids,
+        filter_imaging_by_modalities,
         intersect_data,
         read_clinical_data,
         read_imaging_data,
@@ -50,8 +54,14 @@ def convert(
             f"{get_converter_name(StudyName.OASIS3)} converter does not support multiprocessing yet. n_procs set to 1.",
             lvl="warning",
         )
+    selected_modalities = (
+        tuple(OASIS3Modality(m) for m in modalities)
+        if modalities
+        else tuple(OASIS3Modality)
+    )
     dict_df = read_clinical_data(path_to_clinical)
     imaging_data = read_imaging_data(path_to_dataset)
+    imaging_data = filter_imaging_by_modalities(imaging_data, selected_modalities)
     imaging_data, df_small = intersect_data(imaging_data, dict_df)
     participants, sessions, scans = dataset_to_bids(imaging_data, df_small)
     write_bids(
