@@ -13,6 +13,7 @@ __all__ = [
     "intersect_data",
     "dataset_to_bids",
     "write_bids",
+    "filter_imaging_by_modalities"
 ]
 
 

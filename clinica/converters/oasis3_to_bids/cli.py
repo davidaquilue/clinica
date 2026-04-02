@@ -20,11 +20,13 @@ from ._utils import OASIS3Modality
     default=list(OASIS3Modality),
     help="Convert only the selected modality. By default, all available modalities are converted.",
 )
+@cli_param.subjects_list
 def cli(
     dataset_directory: PathLike,
     clinical_data_directory: PathLike,
     bids_directory: PathLike,
     modalities: Optional[Iterable[Union[str, OASIS3Modality]]] = None,
+    subjects_list: Optional[str] = None,
 ) -> None:
     """OASIS3 to BIDS converter.
 
@@ -39,6 +41,7 @@ def cli(
         bids_directory,
         clinical_data_directory,
         modalities=modalities or list(OASIS3Modality),
+        subjects=subjects_list,
     )
 
 
