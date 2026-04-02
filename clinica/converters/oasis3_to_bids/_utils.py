@@ -26,9 +26,11 @@ class OASIS3Modality(str, Enum):
     T1 = "T1"
     T2STAR = "T2STAR"
     FLAIR = "FLAIR"
+    BOLD = "BOLD"
     DWI = "DWI"
     PET_FDG = "PET_FDG"
     PET_AMYLOID = "PET_AMYLOID"
+    PET_TAU = "PET_TAU"
 
 
 # Mapping from user-facing OASIS3Modality to internal modality strings
@@ -37,9 +39,11 @@ _MODALITY_TO_OASIS3_KEYS: dict[OASIS3Modality, list[str]] = {
     OASIS3Modality.T1: ["T1w_MR"],
     OASIS3Modality.T2STAR: ["T2star_MR"],
     OASIS3Modality.FLAIR: ["FLAIR_MR"],
+    OASIS3Modality.BOLD: ["bold_MR"],
     OASIS3Modality.DWI: ["dwi_MR"],
     OASIS3Modality.PET_FDG: ["pet_FDG"],
     OASIS3Modality.PET_AMYLOID: ["pet_PIB", "pet_AV45"],
+    OASIS3Modality.PET_TAU: ["pet_AV1451"],
 }
 
 # Hardcode relevant .csv filenames from the standardized OASIS3_data_files directory.
